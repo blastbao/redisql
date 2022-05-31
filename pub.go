@@ -101,10 +101,13 @@ func getTableNumber() (int, error) {
 }
 
 //table opertion
+//
+// 检查 {database}.tables 下是否存在 {table}
 func existsTable(tablename string) bool {
 	conn := getConn()
 	defer conn.Close()
 
+	// 检查 {database}.tables 下是否存在 {table}
 	exists, err := redigo.Bool(conn.Do("HEXISTS", fmt.Sprintf(REDISQL_TABLES, database), tablename))
 	if err != nil {
 		fmt.Errorf(err.Error())
@@ -124,6 +127,7 @@ func getNextId(tablename string) (int, error) {
 	conn := getConn()
 	defer conn.Close()
 
+	//
 	tmpid, err := redigo.Int(conn.Do("HGET", fmt.Sprintf(REDISQL_TABLES, database), tablename))
 	if err != nil {
 		return 0, err
@@ -149,10 +153,13 @@ func getNextConditionSn() (int, error) {
 }
 
 //field opertion
+//
+//
 func existsField(tablename, fieldname string) bool {
 	conn := getConn()
 	defer conn.Close()
 
+	// 检查 {database}.{table}.fields 下是否存在 field
 	exists, err := redigo.Bool(conn.Do("HEXISTS", fmt.Sprintf(REDISQL_FIELDS, database, tablename), fieldname))
 	if err != nil {
 		fmt.Errorf(err.Error())
@@ -174,6 +181,7 @@ func existsIndex(tablename, indexname string) bool {
 	conn := getConn()
 	defer conn.Close()
 
+	// 检查 {database}.{table}.indexs 下是否存在 {index}
 	exists, err := redigo.Bool(conn.Do("HEXISTS", fmt.Sprintf(REDISQL_INDEXS, database, tablename), indexname))
 	if err != nil {
 		fmt.Errorf(err.Error())
@@ -189,12 +197,15 @@ func getIndexs(tablename string) (map[string][]string, error) {
 	conn := getConn()
 	defer conn.Close()
 
+	// 获取 {db}.{table}.indexs 下的所有 index 名称
 	indexnames, err := redigo.Strings(conn.Do("HKEYS", fmt.Sprintf(REDISQL_INDEXS, database, tablename)))
 	if err != nil {
 		return nil, err
 	}
 
+	// 获取每个 index 的 <field, type> pairs
 	for _, ix := range indexnames {
+		// 获取 {db}.{table}.indexs 下 index 的具体值，其包含了一组 <field, type> 的 pairs 。
 		fieldnames, err := redigo.String(conn.Do("HGET", fmt.Sprintf(REDISQL_INDEXS, database, tablename), ix))
 		if err != nil {
 			return nil, err

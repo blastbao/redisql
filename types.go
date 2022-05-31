@@ -12,9 +12,9 @@ import (
 //number and date will support range query
 //string will support fuzzy search
 const (
-	REDISQL_TYPE_NUMBER = "NUMBER"
-	REDISQL_TYPE_STRING = "STRING"
-	REDISQL_TYPE_DATE   = "DATE"
+	REDISQL_TYPE_NUMBER = "NUMBER"	// 整数
+	REDISQL_TYPE_STRING = "STRING"	// 字符串
+	REDISQL_TYPE_DATE   = "DATE"   	// 日期
 )
 
 //
